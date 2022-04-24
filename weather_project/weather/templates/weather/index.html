@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+
+{% if chart %}
+    <img src="data:image/png;base64, {{ chart|safe }}">
+{% endif %}
+
+{% for row in context %}
+{{ row.name }}<br>
+<img src="data:image/png;base64, {{ row|safe }}"><br>
+{% endfor %}
+
+{% endblock %}

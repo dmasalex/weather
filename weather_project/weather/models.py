@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from pytils import translit
 
@@ -14,25 +15,23 @@ class City(models.Model):
     name = models.CharField('Название', max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
     comment = models.TextField('Заметка', blank=True)
-    temperature = models.ManyToManyField("Temperature", blank=True, related_name='city')
-    meteo = models.ManyToManyField("Meteo", blank=True, related_name='city')
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
         super(City, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('city_detail', kwargs={'slug': self.slug})
+
+    def get_update_url(self):
+        return reverse('city_update', kwargs={'slug': self.slug})
+
+    def get_delete_url(self):
+        return reverse('city_delete', kwargs={'slug': self.slug})
+
     def __str__(self):
         return f'{self.name}'
-
-    def display_temperature(self):
-        return ', '.join([temperature.name for temperature in self.temperature.all()[:]])
-
-    def display_meteo(self):
-        return ', '.join([meteo.name for meteo in self.meteo.all()[:]])
-
-    display_temperature.short_description = "Температура"
-    display_meteo.short_description = "Метео"
 
     class Meta:
         verbose_name = 'Город'
@@ -64,16 +63,30 @@ class Meteo(models.Model):
         ordering = ['name']
 
 
-class Temperature(models.Model):
-    """Температура"""
-
-    value = models.CharField('Значение', max_length=5)
-    date = models.DateTimeField('Дата/Время')
+class WeatherEvent(models.Model):
+    """Погодное событие"""
+    value = models.CharField('Значение температуры', max_length=5)
+    date = models.DateField('Дата')
+    time = models.TimeField('Время')
+    meteo = models.ManyToManyField(Meteo, blank=True, related_name='weatherevent')
+    city = models.ManyToManyField(City, blank=True, related_name='weatherevent')
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.value}'
+
+    def display_meteo(self):
+        return ', '.join([meteo.name for meteo in self.meteo.all()[:]])
+
+    def display_city(self):
+        return ', '.join([city.name for city in self.city.all()[:]])
+
+    display_meteo.short_description = "Метео"
+    display_city.short_description = "Город"
 
     class Meta:
-        verbose_name = 'Температура'
-        verbose_name_plural = 'Температура'
+        verbose_name = 'Событие'
+        verbose_name_plural = 'События'
+
+
+
 

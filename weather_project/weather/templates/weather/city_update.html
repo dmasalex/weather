@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Редактировать город
+{% endblock %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="card-header">Редактирование города</div>
+    <form action="{{ city.get_update_url }}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-error">{{ form.non.field.errors }}</div>
+        {% if request.user.is_authenticated %}
+        {% for row in form %}
+        <div class="card-body">
+            <label class="form-label" for="{{ row.id_for_label }}">{{ row.label }}:</label> {{ row }}
+            <div class="form-error">{{ row.errors }}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="card-header">
+            <a href="{{ city.get_absolute_url }}"
+               class="btn btn-outline-secondary">Назад</a>
+            <button type="submit" class="btn btn-primary btn-block">Сохранить данные</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

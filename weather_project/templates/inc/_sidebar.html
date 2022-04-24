@@ -1,0 +1,9 @@
+{% load city_tags %}
+
+{% get_cities as cities_menu %}
+
+<div class="list-group">
+    {% for city in cities_menu %}
+    <a href="{{ city.get_absolute_url }}" class="list-group-item list-group-item-action">{{ city }}</a>
+    {% endfor %}
+</div>

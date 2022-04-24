@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ object.name }}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="card-header">Сводка погоды:</div>
+    <div class="card-body">
+
+        <h4>{{ context.city }}</h4>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Город</th>
+                <th scope="col">Дата</th>
+                <th scope="col">Время (час.)</th>
+                <th scope="col">Температура</th>
+                <th scope="col">Описание</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for weather in city_weather %}
+
+            <tr>
+                {% for row in weather.city.all %}
+                <th scope="row">{{ row.name }}</th>
+                {% endfor %}
+                <td>{{ weather.date }}</td>
+                <td>{{ weather.time.hour }}</td>
+                <td>{{ weather.value }}</td>
+                {% for row in weather.meteo.all %}
+                <td>{{ row.name }}</td>
+                {% empty %}
+                <td>Не определено</td>
+                {% endfor %}
+            </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
